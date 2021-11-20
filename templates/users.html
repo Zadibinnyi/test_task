@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% for obj in object_list %}
+        {% if not obj == request.user %}
+            <div class="list">
+                <a style="text-decoration: none; font-size: 14px; " href="{% url 'user_lists' obj.pk%}">{{ obj.username }}</a>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}

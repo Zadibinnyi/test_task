@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="{% url 'filter' %}" method="get">
+        <div class="left-side my-4">
+            <h3 class="sear-head editContent">Ganres</h3>
+            <ul class="w3layouts-box-list">
+                {% for ganre in view.get_ganres %}
+                    <li class="editContent">
+                        <input type="checkbox" class="checked" name="ganre" value="{{ ganre.title }}">
+                        <span class="span editContent">{{ ganre.title }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <button type="submit">Search</button>
+    </form>
+    <div>
+        {% for obj in page_obj %}
+            <div class="list">
+                <a href="{% url 'about_film' obj.pk %}"> {{ obj.title }} </a> <br>
+            </div>
+        {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Первая</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% for obj in object_list %}
+        {% if obj.listsuser.lists.title == 'Thrown' %}
+            {% if obj.listsuser.user == request.user %}
+                <div class="list">
+                    <a style="text-decoration: none; font-size: 14px; " href="{% url 'about' obj.pk %}">{{ obj.film }}</a>
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}

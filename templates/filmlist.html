@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <p>{{ object.film }}</p>
+    <a style="text-decoration: none; font-size: 14px; " href="{% url 'update_filminlist' object.pk %}">Change list</a>
+    <form method="post" action="{% url 'delete_film' object.pk %}">
+        {% csrf_token %}
+        <input type="submit" value="Delete">
+    </form>
+
+{% endblock %}

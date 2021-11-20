@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% for obj in object_list %}
+        {% if obj.user == request.user %}
+                <div class="list">
+                    {% if obj.lists.title == 'Planned' %}
+                        <a href="{% url 'planned' obj.pk%}"> {{ obj.lists }} </a>
+                        <a href="{% url 'update_list' obj.pk%}">Change</a>
+                    {% endif %}
+                    {% if obj.lists.title == 'Viewed' %}
+                        <a href="{% url 'viewed' obj.pk%}"> {{ obj.lists }} </a>
+                        <a href="{% url 'update_list' obj.pk%}">Change</a>
+                    {% endif %}
+                    {% if obj.lists.title == 'Thrown' %}
+                        <a href="{% url 'thrown' obj.pk%}"> {{ obj.lists }} </a>
+                        <a href="{% url 'update_list' obj.pk%}">Change</a>
+                    {% endif %}
+                </div>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}

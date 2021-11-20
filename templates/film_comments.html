@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <ul class="w3layouts-box-list" >
+        {% for obj in object_list %}
+            <li class="editContent" style="list-style:none" >
+                {% if obj.user == request.user %}
+                    <p>You: {{ obj.text }}</p>
+                {% endif %}
+                {% if obj.user != request.user %}
+                    <p>{{ obj.user }}: {{ obj.text }}</p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

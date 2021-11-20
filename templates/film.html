@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <p>{{ object.title }}</p>
+    {% for objc in film %}
+        {% if objc.id == object.id %}
+            {{ objc.rank }}
+        {% endif %}
+    {% endfor %}
+    <form method="post" action="{% url 'add_rating' object.pk %}">
+        {% csrf_token %}
+        <p>Add rating</p>
+        {{ rating }}
+        <button type="submit" value="rating" class="btn btn-success">Review</button>
+    </form>
+
+    <ul class="w3layouts-box-list" >
+        <li class="editContent" style="list-style:none" >
+            <a style="text-decoration: none; font-size: 14px; " href="{% url 'add' object.pk %}">Add film to list</a>
+        </li>
+    </ul>
+    <p>Similar films:</p>
+    {% for obj in film %}
+        {% if obj.series_id == object.series.id and obj.title != object.title %}
+            <a href="{% url 'about_film' obj.id %}"> {{ obj.title }} </a> <br>
+        {% endif %}
+        {% if obj.series_id == 2 %}
+
+        {% endif %}
+    {% endfor %}
+    <ul class="w3layouts-box-list" >
+        <li class="editContent" style="list-style:none" >
+            <a style="text-decoration: none; font-size: 14px; " href="{% url 'comments' object.pk %}">Comments</a>
+        </li>
+    </ul>
+    <form method="post" action="{% url 'add_comment' object.pk %}">
+        {% csrf_token %}
+        <p>Add comment</p>
+        {{ comment }}
+        <button type="submit" value="comment" class="btn btn-success">Comment</button>
+    </form>
+{% endblock %}
