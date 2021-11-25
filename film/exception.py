@@ -6,3 +6,5 @@ class FilmAlreadyAdd(ValueError):
     pass
 
 
+class RatingValueError(ValueError):
+    pass

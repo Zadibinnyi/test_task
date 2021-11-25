@@ -4,15 +4,7 @@
     {% for obj in object_list %}
             {% if obj.access == True %}
                 <div class="list">
-                    {% if obj.lists.title == 'Planned' %}
-                        <a href="{% url 'planned' obj.pk%}"> {{ obj.lists }} </a>
-                    {% endif %}
-                    {% if obj.lists.title == 'Viewed' %}
-                        <a href="{% url 'viewed' obj.pk%}"> {{ obj.lists }} </a>
-                    {% endif %}
-                    {% if obj.lists.title == 'Thrown' %}
-                        <a href="{% url 'thrown' obj.pk%}"> {{ obj.lists }} </a>
-                    {% endif %}
+                        <a href="{% url 'lists_user' obj.pk%}"> {{ obj.lists }} </a>
                 </div>
             {% endif %}
     {% endfor %}

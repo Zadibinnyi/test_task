@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Avg
 
-from film.exception import ListAlreadyCreated, FilmAlreadyAdd
+from film.exception import ListAlreadyCreated, FilmAlreadyAdd, RatingValueError
 
 
 class Series(models.Model):
@@ -38,7 +38,13 @@ class GenresFilm(models.Model):
 
 
 class Lists(models.Model):
-    title = models.CharField(max_length=120)
+    CATEGORY_LIST = (
+        ('Planned', 'Planned'),
+        ('Viewed', 'Viewed'),
+        ('Thrown', 'Thrown'),
+    )
+
+    title = models.CharField(max_length=120, choices=CATEGORY_LIST)
 
     def __str__(self):
         return self.title
@@ -53,7 +59,8 @@ class ListsUser(models.Model):
         return self.lists.title
 
     def save(self, *args, **kwargs):
-        if ListsUser.objects.filter(lists_id=self.lists.id):
+        if ListsUser.objects.filter(lists_id=self.lists.id, user=self.user) \
+                and ListsUser.objects.filter(access=self.access):
             raise ListAlreadyCreated()
         else:
             super(ListsUser, self).save(*args, **kwargs)
@@ -85,15 +92,16 @@ class Comment(models.Model):
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     film = models.ForeignKey(Film, on_delete=models.CASCADE, related_name='rating')
-    rating = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(5)]
-    )
+    rating = models.IntegerField(default=1)
 
     def __str__(self):
         return f"{self.film}, {self.rating}"
 
     def save(self, *args, **kwargs):
-        super(Rating, self).save(*args, **kwargs)
-        self.film.rank = Rating.objects.filter(film_id=self.film.id).aggregate(Avg('rating')).__getitem__('rating__avg')
-        self.film.save()
+        if self.rating >= 1 and self.rating <= 5:
+            super(Rating, self).save(*args, **kwargs)
+            self.film.rank = Rating.objects.filter(film_id=self.film.id).aggregate(Avg('rating')).__getitem__('rating__avg')
+            self.film.save()
+        else:
+            raise RatingValueError()
 

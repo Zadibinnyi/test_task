@@ -39,13 +39,6 @@ class FilmListView(GenreFilter, ListView):
     template_name = 'index.html'
     paginate_by = 2
 
-
-class FilterMovieView(GenreFilter, ListView):
-    model = Film
-    queryset = Film.objects.all()
-    template_name = 'index.html'
-    paginate_by = 2
-
     def get_queryset(self):
         context = self.request.GET.get('ganre')
         if context is None:
@@ -89,22 +82,24 @@ class ListUserUpdateView(LoginRequiredMixin, UpdateView):
     success_url = '/'
 
 
-class PlannedListView(ListView):
+class ListsView(ListView):
     pk_url_kwarg = "pk"
     model = FilmListsUser
-    template_name = "planned.html"
+    template_name = "list.html"
+
+    def get_queryset(self):
+        queryset = FilmListsUser.objects.filter(listsuser=self.kwargs["pk"])
+        return queryset
 
 
-class ViewedListView(ListView):
+class ListsUsersView(ListView):
     pk_url_kwarg = "pk"
     model = FilmListsUser
-    template_name = "viewed.html"
+    template_name = "filmuserslist.html"
 
-
-class ThrownListView(ListView):
-    pk_url_kwarg = "pk"
-    model = FilmListsUser
-    template_name = "thrown.html"
+    def get_queryset(self):
+        queryset = FilmListsUser.objects.filter(listsuser=self.kwargs["pk"])
+        return queryset
 
 
 class AddFilmToListView(LoginRequiredMixin, CreateView):
@@ -118,7 +113,7 @@ class AddFilmToListView(LoginRequiredMixin, CreateView):
             lists = form.save(commit=False)
             lists.film = Film.objects.get(pk=self.kwargs["pk"])
             lists.save()
-            return HttpResponseRedirect('/lists/')
+            return messages.error(self.request, "Added!")
         except FilmAlreadyAdd:
             return messages.error(self.request, "Film alredy added to this list!")
         finally:
@@ -145,17 +140,22 @@ class AddRatingView(LoginRequiredMixin, CreateView):
     form_class = RatingForm
 
     def post(self, request, **kwargs):
-        form = RatingForm(request.POST)
-        if form.is_valid():
-            Rating.objects.update_or_create(
-                user=self.request.user,
-                film=Film.objects.get(pk=self.kwargs["pk"]),
-                defaults={'rating': int(request.POST.get("rating"))}
-            )
-            return HttpResponseRedirect(self.get_success_url())
+        try:
+            form = RatingForm(request.POST)
+            if form.is_valid():
+                Rating.objects.update_or_create(
+                    user=self.request.user,
+                    film=Film.objects.get(pk=self.kwargs["pk"]),
+                    defaults={'rating': int(request.POST.get("rating"))}
+                )
+                return HttpResponseRedirect(self.get_success_url())
+        except RatingValueError:
+            return messages.error(self.request, "Rating must be grate 0 and less or equal 5")
+        finally:
+            return redirect(self.get_success_url())
 
     def get_success_url(self):
-        return "/"
+        return f"/film/{self.kwargs['pk']}"
 
 
 class FilmAbout(DetailView):
@@ -189,7 +189,7 @@ class ListInFilmUpdateView(LoginRequiredMixin, UpdateView):
         try:
             lists = form.save(commit=False)
             lists.save()
-            return HttpResponseRedirect('/lists/')
+            return messages.error(self.request, "Changed!")
         except FilmAlreadyAdd:
             return messages.error(self.request, "Film alredy in this list!")
         finally:
@@ -228,6 +228,6 @@ class AddCommentView(LoginRequiredMixin, CreateView):
             return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return "/"
+        return f"/film/comments/{self.kwargs['pk']}"
 
 
