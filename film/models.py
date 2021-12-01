@@ -59,8 +59,7 @@ class ListsUser(models.Model):
         return self.lists.title
 
     def save(self, *args, **kwargs):
-        if ListsUser.objects.filter(lists_id=self.lists.id, user=self.user) \
-                and ListsUser.objects.filter(access=self.access):
+        if ListsUser.objects.filter(lists_id=self.lists.id, user=self.user, access=self.access):
             raise ListAlreadyCreated()
         else:
             super(ListsUser, self).save(*args, **kwargs)

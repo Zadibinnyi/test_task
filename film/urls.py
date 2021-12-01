@@ -6,7 +6,7 @@ from film.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', FilmListView.as_view(), name='index'),
-    path('login/', Login.as_view(), name='login'),
+    path('login/', Login.as_view(redirect_authenticated_user=True), name='login'),
     path('register/', Register.as_view(), name='registration'),
     path('logout/', Logout.as_view(), name='logout'),
     path('addlist/', AddUserList.as_view(), name='addlist'),

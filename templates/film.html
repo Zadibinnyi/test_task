@@ -24,7 +24,6 @@
         </li>
     </ul>
     {% if object.series.title != null %}
-        <p>Similar films:</p>
         {% for obj in film %}
             {% if obj.series_id == object.series.id and obj.title != object.title %}
                 <a href="{% url 'about_film' obj.id %}"> {{ obj.title }} </a> <br>

@@ -3,9 +3,16 @@
 {% block content %}
 
     {% for obj in object_list %}
-        <div class="list">
-            <a style="text-decoration: none; font-size: 14px; " href="{% url 'about' obj.pk %}">{{ obj.film }}</a>
-        </div>
+        {% if obj.listsuser.user == request.user %}
+            <div class="list">
+                <a style="text-decoration: none; font-size: 14px; " href="{% url 'about' obj.pk %}">{{ obj.film }}</a>
+            </div>
+        {% endif %}
+        {% if obj.listsuser.user != request.user and obj.listsuser.access == True %}
+            <div class="list">
+                <a href="{% url 'about_film' obj.pk %}"> {{ obj.film }} </a> <br>
+            </div>
+        {% endif %}
     {% endfor %}
 
 {% endblock %}

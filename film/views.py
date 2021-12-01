@@ -207,6 +207,7 @@ class UserView(ListView):
 
 
 class UserListsView(ListView):
+
     pk_url_kwarg = "pk"
     model = ListsUser
     template_name = "userlists.html"
